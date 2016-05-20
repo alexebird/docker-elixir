@@ -9,6 +9,19 @@ defmodule Docker.Containers do
   end
 
   @doc """
+  List all existing containers with filtering.
+  """
+  def list(filters) do
+    "#{@base_uri}/json?all=true&filters=#{build_filters(filters)}" |> Docker.Client.get
+  end
+
+  def build_filters(filters) do
+    %{
+      label: filters |> Enum.map(fn {k,v} -> "#{k}=#{v}"end) |> Enum.sort
+    } |> Poison.encode!
+  end
+
+  @doc """
   Inspect a container by ID.
   """
   def inspect(id) do
